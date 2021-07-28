@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import AddIcon from "@material-ui/icons/Add";
+import { v4 as uuidv4 } from "uuid";
 
 import ListItems from "./ListItems";
 
@@ -21,9 +22,39 @@ const styles = {
 };
 
 class AddItem extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      inputValue: "",
+      items: [],
+    };
+  }
+
+  handleInputChange = (event) => {
+    this.setState({ inputValue: event.target.value });
+  };
+
+  addItem = () => {
+    if (this.state.inputValue !== "") {
+      let items = this.state.items;
+      items.push({ id: uuidv4(), name: this.state.inputValue });
+      localStorage.setItem("itemName", this.state.inputValue);
+      this.setState({ items, inputValue: "" }, () => {
+        console.log(this.state.items);
+      });
+    }
+  };
+
+  deleteItem = (id) => {
+    let items = this.state.items;
+    this.setState({ items: items.filter((_data) => _data.id !== id) });
+  };
+
   render() {
     const { classes } = this.props;
     console.log(classes);
+    console.log(localStorage.getItem("itemName"));
     return (
       <>
         <Container component="main" maxWidth="xs">
@@ -43,6 +74,9 @@ class AddItem extends Component {
               >
                 <Grid item xs={12}>
                   <Typography variant="h5" className={classes.root}>
+                    {this.state.items.length !== 0
+                      ? `(${this.state.items.length})`
+                      : ""}{" "}
                     To Do List
                   </Typography>
                 </Grid>
@@ -50,10 +84,13 @@ class AddItem extends Component {
                   <Input
                     id="data"
                     type="text"
+                    style={{ color: "#FFFFFF" }}
+                    onChange={this.handleInputChange}
+                    value={this.state.inputValue}
                     endAdornment={
                       <InputAdornment position="end">
-                        <IconButton onClick={(e) => console.log("Clicked")}>
-                          <AddIcon />
+                        <IconButton onClick={this.addItem}>
+                          <AddIcon className={classes.root} />
                         </IconButton>
                       </InputAdornment>
                     }
@@ -62,7 +99,10 @@ class AddItem extends Component {
               </Grid>
               <Grid container>
                 <Grid item xs={12}>
-                  <ListItems />
+                  <ListItems
+                    items={this.state.items}
+                    deleteItem={this.deleteItem}
+                  />
                 </Grid>
               </Grid>
             </CardContent>

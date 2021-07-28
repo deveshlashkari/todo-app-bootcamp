@@ -4,45 +4,47 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
   ListItemSecondaryAction,
   Grid,
   IconButton,
 } from "@material-ui/core";
 
+import { withStyles } from "@material-ui/styles";
+
 import DeleteIcon from "@material-ui/icons/Delete";
 
-export default class ListItems extends Component {
+const styles = {
+  root: {
+    color: "#FFFFFF",
+  },
+};
+class ListItems extends Component {
   render() {
+    console.log(this.props);
+    const { classes, items, deleteItem } = this.props;
     return (
       <>
         <Grid container>
           <Grid item xs={12}>
             <List>
-              <ListItem button>
-                <ListItemText primary="Take Milk from Dairy" />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Take Milk from Dairy" />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="Take Milk from Dairy" />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
+              {items.map((_data) => {
+                return (
+                  <ListItem button key={_data.id}>
+                    <ListItemText
+                      primary={_data.name}
+                      className={classes.root}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        onClick={(e) => deleteItem(_data.id)}
+                      >
+                        <DeleteIcon className={classes.root} />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                );
+              })}
             </List>
           </Grid>
         </Grid>
@@ -50,3 +52,5 @@ export default class ListItems extends Component {
     );
   }
 }
+
+export default withStyles(styles)(ListItems);
